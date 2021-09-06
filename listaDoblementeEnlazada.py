@@ -12,16 +12,27 @@ class List():
     #Creacion del objeto Lista TAD
     def __init__(self):
         self.root = None
+        self.tail = None
+        self.size = 0
+    #Funcion para verificar si la lista esta vacia
+    def clean(self):
+        if self.root:
+            return False
+        else:
+            return True
 
     #Funcion para añadir y ordenar a la vez un nombre en forma alfabetica
     def add(self,dato):
         nodo = Node(dato)
-        if self.root is None:
+        if self.clean():
             self.root = nodo
+            self.tail = nodo
+            self.size += 1
         elif self.root.data > nodo.data:
             nodo.siguiente = self.root
             self.root.anterior = nodo
             self.root = nodo
+            self.size += 1
         else:
             prev = self.root
             act = self.root.siguiente
@@ -31,12 +42,15 @@ class List():
                     nodo.anterior = prev
                     nodo.siguiente = act
                     act.anterior = nodo
+                    self.size += 1
                     return nodo
                 prev = act
                 act = act.siguiente
             prev.siguiente = nodo
             nodo.anterior = prev
+            self.size += 1
             return nodo
+        
 
     #Funcion para buscar un elemento en la lista
     def search(self,item):
@@ -52,6 +66,8 @@ class List():
     def delete(self, item):
         if self.root.data == item:
             self.root = self.root.siguiente
+        elif self.clean():
+            return print('No es posible eliminar un elemento si la lista esta vacia!')
         else:
             prev = self.root
             act = prev.siguiente
@@ -77,22 +93,39 @@ class List():
             aux = aux.siguiente
         string += ']'
         return string
+    
+    def recorridoInverso(self):
+        if self.root is None:
+            print('la lista esta vacia')
+            return
+        p = self.root
+        q = p.siguiente
+        p.siguiente = None
+        p.anterior = q
+        while q is not None:
+            q.anterior = q.siguiente
+            q.siguiente = p
+            p = q
+            q = q.anterior
+        self.root = p
+        return p
 
-if __name__ == 'main':
-    l = List()
-    while True:
-        entrada = input('Ingrese un nombre o 0 para detener el programa: ')
-        if entrada == '0':
-            break
-        l.add(entrada)
 
-    if l.clean():
-        print('La lista NO contiene elementos!')
-    else:
-        print('La lista contiene nodos!')
-        print('### Lista antes de borrar un dato ### ')
-        print(l.recorrido())
-        l.search('esteban')
-        l.delete('gabriel')
-        print('### Lista despues de borrar un dato ### ')
-        print(l.recorrido())
+l = List()
+while True:
+    entrada = input('Ingrese un nombre o 0 para detener el programa: ')
+    if entrada == '0':
+        break
+    l.add(entrada)
+
+if l.clean():
+    print('La lista NO contiene elementos!')
+else:
+    print('La lista contiene nodos!')
+    print('### Lista antes de borrar un dato ### ')
+    print(l.recorrido())
+    l.search('esteban')
+    l.delete('gabriel')
+    print('### Lista Inversa ###')
+    for i in range(l.size):
+        print(l.recorridoInverso())
